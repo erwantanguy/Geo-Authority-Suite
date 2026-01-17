@@ -1,0 +1,30 @@
+#adminmenu .wp-has-current-submenu .wp-submenu {
+    margin-left: 0;
+}
+
+.geo-schema-properties {
+    background: #fff;
+}
+
+.geo-schema-properties h4 {
+    margin: 20px 0 10px;
+    padding: 10px;
+    background: #f0f0f0;
+    border-left: 3px solid #0073aa;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.geo-schema-properties .form-table th {
+    width: 200px;
+}
+
+.entity-link {
+    color: #0073aa;
+    text-decoration: underline;
+}
+
+.entity-mention {
+    font-weight: 600;
+    color: #23282d;
+}

@@ -78,6 +78,53 @@ Utilisez le shortcode `[entity id=X]` pour créer des mentions sémantiques :
 J'ai rencontré [entity id=5] lors de la conférence organisée par [entity id=3].
 ```
 
+#### EXEMPLES D'UTILISATION
+
+1. MENTION INLINE SIMPLE
+```markdown
+[entity id=5]
+```
+→ Affiche : "Erwan Tanguy" (lien simple)
+
+2. MENTION AVEC FONCTION
+```markdown
+[entity id=5 show="name+title"]
+```
+→ Affiche : "Erwan Tanguy (CEO, développeur)"
+
+3. MENTION COMPLÈTE
+```markdown
+[entity id=5 show="full"]
+```
+→ Affiche : "Erwan Tanguy – CEO – Expert en SEO depuis..."
+
+4. SANS LIEN
+```markdown
+[entity id=5 show="name+title" link="no"]
+```
+→ Affiche : "Erwan Tanguy (CEO)" (pas de lien)
+
+5. AVEC IMAGE MINIATURE
+```markdown
+[entity id=5 image="yes" show="name+title"]
+```
+→ Affiche : [photo] Erwan Tanguy (CEO)
+
+6. CARTE ENRICHIE
+```markdown
+[entity id=5 display="card"]
+```
+→ Affiche : Carte complète avec photo, nom, fonction, description, bouton
+
+7. TOOLTIP AU SURVOL
+```markdown
+[entity id=5 display="tooltip"]
+```
+→ Affiche : Lien avec info-bulle affichant fonction + description
+
+*/
+
+
 Le shortcode génère automatiquement :
 - Un lien vers la page de l'entité (si URL définie)
 - Une référence dans le graphe d'entités JSON-LD

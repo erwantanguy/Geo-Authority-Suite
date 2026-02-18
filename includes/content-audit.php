@@ -37,6 +37,12 @@ function geo_render_content_audit_page() {
         'with_audio'      => 0,
         'with_video'      => 0,
         'with_entities'   => 0,
+        'with_tldr'       => 0,
+        'with_howto'      => 0,
+        'with_definition' => 0,
+        'with_proscons'   => 0,
+        'with_author'     => 0,
+        'with_stats'      => 0,
         'score_excellent' => 0,
         'score_good'      => 0,
         'score_poor'      => 0,
@@ -52,6 +58,12 @@ function geo_render_content_audit_page() {
         if ($audit['has_audio']) $stats['with_audio']++;
         if ($audit['has_video']) $stats['with_video']++;
         if ($audit['has_entities']) $stats['with_entities']++;
+        if ($audit['has_tldr']) $stats['with_tldr']++;
+        if ($audit['has_howto']) $stats['with_howto']++;
+        if ($audit['has_definition']) $stats['with_definition']++;
+        if ($audit['has_proscons']) $stats['with_proscons']++;
+        if ($audit['has_author']) $stats['with_author']++;
+        if ($audit['has_stats']) $stats['with_stats']++;
 
         if ($audit['geo_score'] >= 80) $stats['score_excellent']++;
         elseif ($audit['geo_score'] >= 50) $stats['score_good']++;
@@ -102,41 +114,86 @@ function geo_render_content_audit_page() {
                     </tr>
                 </thead>
                 <tbody>
+                    <tr style="background: #f0f7ff;">
+                        <td colspan="4"><strong>Blocs GEO Blocks Suite</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>TL;DR</strong></td>
+                        <td><?php echo $stats['with_tldr']; ?></td>
+                        <td><?php echo round(($stats['with_tldr'] / max($stats['total'], 1)) * 100); ?>%</td>
+                        <td><span style="color: #00a32a;">Eleve (+15)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>How-To</strong></td>
+                        <td><?php echo $stats['with_howto']; ?></td>
+                        <td><?php echo round(($stats['with_howto'] / max($stats['total'], 1)) * 100); ?>%</td>
+                        <td><span style="color: #00a32a;">Tres eleve (+20)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Definitions</strong></td>
+                        <td><?php echo $stats['with_definition']; ?></td>
+                        <td><?php echo round(($stats['with_definition'] / max($stats['total'], 1)) * 100); ?>%</td>
+                        <td><span style="color: #00a32a;">Eleve (+15 max)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pros/Cons</strong></td>
+                        <td><?php echo $stats['with_proscons']; ?></td>
+                        <td><?php echo round(($stats['with_proscons'] / max($stats['total'], 1)) * 100); ?>%</td>
+                        <td><span style="color: #00a32a;">Eleve (+15)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Author Box</strong></td>
+                        <td><?php echo $stats['with_author']; ?></td>
+                        <td><?php echo round(($stats['with_author'] / max($stats['total'], 1)) * 100); ?>%</td>
+                        <td><span style="color: #dba617;">Moyen (+10)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stats</strong></td>
+                        <td><?php echo $stats['with_stats']; ?></td>
+                        <td><?php echo round(($stats['with_stats'] / max($stats['total'], 1)) * 100); ?>%</td>
+                        <td><span style="color: #dba617;">Moyen (+10 max)</span></td>
+                    </tr>
+                    <tr style="background: #f0f7ff;">
+                        <td colspan="4"><strong>Contenus classiques</strong></td>
+                    </tr>
                     <tr>
                         <td><strong>FAQ</strong></td>
                         <td><?php echo $stats['with_faq']; ?></td>
                         <td><?php echo round(($stats['with_faq'] / max($stats['total'], 1)) * 100); ?>%</td>
-                        <td><span style="color: #00a32a;">Tres eleve</span></td>
+                        <td><span style="color: #00a32a;">Tres eleve (+30)</span></td>
                     </tr>
                     <tr>
                         <td><strong>Citations (blockquote)</strong></td>
                         <td><?php echo $stats['with_blockquotes']; ?></td>
                         <td><?php echo round(($stats['with_blockquotes'] / max($stats['total'], 1)) * 100); ?>%</td>
-                        <td><span style="color: #00a32a;">Eleve</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Images</strong></td>
-                        <td><?php echo $stats['with_images']; ?></td>
-                        <td><?php echo round(($stats['with_images'] / max($stats['total'], 1)) * 100); ?>%</td>
-                        <td><span style="color: #dba617;">Moyen</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Audio</strong></td>
-                        <td><?php echo $stats['with_audio']; ?></td>
-                        <td><?php echo round(($stats['with_audio'] / max($stats['total'], 1)) * 100); ?>%</td>
-                        <td><span style="color: #dba617;">Faible</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Video</strong></td>
-                        <td><?php echo $stats['with_video']; ?></td>
-                        <td><?php echo round(($stats['with_video'] / max($stats['total'], 1)) * 100); ?>%</td>
-                        <td><span style="color: #00a32a;">Eleve</span></td>
+                        <td><span style="color: #00a32a;">Eleve (+15)</span></td>
                     </tr>
                     <tr>
                         <td><strong>Entites</strong></td>
                         <td><?php echo $stats['with_entities']; ?></td>
                         <td><?php echo round(($stats['with_entities'] / max($stats['total'], 1)) * 100); ?>%</td>
-                        <td><span style="color: #00a32a;">Tres eleve</span></td>
+                        <td><span style="color: #00a32a;">Tres eleve (+20)</span></td>
+                    </tr>
+                    <tr style="background: #f0f7ff;">
+                        <td colspan="4"><strong>Medias</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Images</strong></td>
+                        <td><?php echo $stats['with_images']; ?></td>
+                        <td><?php echo round(($stats['with_images'] / max($stats['total'], 1)) * 100); ?>%</td>
+                        <td><span style="color: #dba617;">Moyen (+15 max)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Video</strong></td>
+                        <td><?php echo $stats['with_video']; ?></td>
+                        <td><?php echo round(($stats['with_video'] / max($stats['total'], 1)) * 100); ?>%</td>
+                        <td><span style="color: #00a32a;">Eleve (+10)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Audio</strong></td>
+                        <td><?php echo $stats['with_audio']; ?></td>
+                        <td><?php echo round(($stats['with_audio'] / max($stats['total'], 1)) * 100); ?>%</td>
+                        <td><span style="color: #dba617;">Faible (+5)</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -148,10 +205,10 @@ function geo_render_content_audit_page() {
             <table class="wp-list-table widefat fixed striped">
                 <thead>
                     <tr>
-                        <th style="width: 35%;">Article</th>
-                        <th style="width: 12%;">Score</th>
-                        <th style="width: 33%;">Elements GEO</th>
-                        <th style="width: 20%;">Actions</th>
+                        <th style="width: 30%;">Article</th>
+                        <th style="width: 10%;">Score</th>
+                        <th style="width: 45%;">Elements GEO</th>
+                        <th style="width: 15%;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -185,24 +242,42 @@ function geo_render_content_audit_page() {
                             </td>
 
                             <td>
-                                <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px;">
-                                    <span style="padding: 4px 8px; background: <?php echo $audit['has_faq'] ? '#d4edda' : '#f8d7da'; ?>; border-radius: 3px;">
+                                <div style="display: flex; flex-wrap: wrap; gap: 5px; font-size: 11px;">
+                                    <span style="padding: 3px 6px; background: <?php echo $audit['has_tldr'] ? '#cce5ff' : '#f5f5f5'; ?>; border-radius: 3px; color: <?php echo $audit['has_tldr'] ? '#004085' : '#999'; ?>;">
+                                        <?php echo $audit['has_tldr'] ? '✓' : '✗'; ?> TL;DR
+                                    </span>
+                                    <span style="padding: 3px 6px; background: <?php echo $audit['has_howto'] ? '#cce5ff' : '#f5f5f5'; ?>; border-radius: 3px; color: <?php echo $audit['has_howto'] ? '#004085' : '#999'; ?>;">
+                                        <?php echo $audit['has_howto'] ? '✓' : '✗'; ?> How-To<?php if ($audit['has_howto']): ?> (<?php echo $audit['howto_steps']; ?>)<?php endif; ?>
+                                    </span>
+                                    <span style="padding: 3px 6px; background: <?php echo $audit['has_definition'] ? '#cce5ff' : '#f5f5f5'; ?>; border-radius: 3px; color: <?php echo $audit['has_definition'] ? '#004085' : '#999'; ?>;">
+                                        <?php echo $audit['has_definition'] ? '✓' : '✗'; ?> Def (<?php echo $audit['definition_count']; ?>)
+                                    </span>
+                                    <span style="padding: 3px 6px; background: <?php echo $audit['has_proscons'] ? '#cce5ff' : '#f5f5f5'; ?>; border-radius: 3px; color: <?php echo $audit['has_proscons'] ? '#004085' : '#999'; ?>;">
+                                        <?php echo $audit['has_proscons'] ? '✓' : '✗'; ?> Pro/Con
+                                    </span>
+                                    <span style="padding: 3px 6px; background: <?php echo $audit['has_author'] ? '#cce5ff' : '#f5f5f5'; ?>; border-radius: 3px; color: <?php echo $audit['has_author'] ? '#004085' : '#999'; ?>;">
+                                        <?php echo $audit['has_author'] ? '✓' : '✗'; ?> Author
+                                    </span>
+                                    <span style="padding: 3px 6px; background: <?php echo $audit['has_stats'] ? '#cce5ff' : '#f5f5f5'; ?>; border-radius: 3px; color: <?php echo $audit['has_stats'] ? '#004085' : '#999'; ?>;">
+                                        <?php echo $audit['has_stats'] ? '✓' : '✗'; ?> Stats (<?php echo $audit['stats_count']; ?>)
+                                    </span>
+                                    <span style="padding: 3px 6px; background: <?php echo $audit['has_faq'] ? '#d4edda' : '#f8d7da'; ?>; border-radius: 3px;">
                                         <?php echo $audit['has_faq'] ? '✓' : '✗'; ?> FAQ (<?php echo $audit['faq_count']; ?>)
                                     </span>
-                                    <span style="padding: 4px 8px; background: <?php echo $audit['has_blockquotes'] ? '#d4edda' : '#f8d7da'; ?>; border-radius: 3px;">
-                                        <?php echo $audit['has_blockquotes'] ? '✓' : '✗'; ?> Citations (<?php echo $audit['blockquote_count']; ?>)
+                                    <span style="padding: 3px 6px; background: <?php echo $audit['has_blockquotes'] ? '#d4edda' : '#f8d7da'; ?>; border-radius: 3px;">
+                                        <?php echo $audit['has_blockquotes'] ? '✓' : '✗'; ?> Cit (<?php echo $audit['blockquote_count']; ?>)
                                     </span>
-                                    <span style="padding: 4px 8px; background: <?php echo $audit['has_images'] ? '#d4edda' : '#f8d7da'; ?>; border-radius: 3px;">
-                                        <?php echo $audit['has_images'] ? '✓' : '✗'; ?> Images (<?php echo $audit['image_count']; ?>)
+                                    <span style="padding: 3px 6px; background: <?php echo $audit['has_entities'] ? '#d4edda' : '#f8d7da'; ?>; border-radius: 3px;">
+                                        <?php echo $audit['has_entities'] ? '✓' : '✗'; ?> Ent (<?php echo $audit['entity_count']; ?>)
                                     </span>
-                                    <span style="padding: 4px 8px; background: <?php echo $audit['has_audio'] ? '#d4edda' : '#f8d7da'; ?>; border-radius: 3px;">
-                                        <?php echo $audit['has_audio'] ? '✓' : '✗'; ?> Audio (<?php echo $audit['audio_count']; ?>)
+                                    <span style="padding: 3px 6px; background: <?php echo $audit['has_images'] ? '#fff3cd' : '#f5f5f5'; ?>; border-radius: 3px; color: <?php echo $audit['has_images'] ? '#856404' : '#999'; ?>;">
+                                        <?php echo $audit['has_images'] ? '✓' : '✗'; ?> Img (<?php echo $audit['image_count']; ?>)
                                     </span>
-                                    <span style="padding: 4px 8px; background: <?php echo $audit['has_video'] ? '#d4edda' : '#f8d7da'; ?>; border-radius: 3px;">
-                                        <?php echo $audit['has_video'] ? '✓' : '✗'; ?> Video (<?php echo $audit['video_count']; ?>)
+                                    <span style="padding: 3px 6px; background: <?php echo $audit['has_video'] ? '#fff3cd' : '#f5f5f5'; ?>; border-radius: 3px; color: <?php echo $audit['has_video'] ? '#856404' : '#999'; ?>;">
+                                        <?php echo $audit['has_video'] ? '✓' : '✗'; ?> Vid (<?php echo $audit['video_count']; ?>)
                                     </span>
-                                    <span style="padding: 4px 8px; background: <?php echo $audit['has_entities'] ? '#d4edda' : '#f8d7da'; ?>; border-radius: 3px;">
-                                        <?php echo $audit['has_entities'] ? '✓' : '✗'; ?> Entites (<?php echo $audit['entity_count']; ?>)
+                                    <span style="padding: 3px 6px; background: <?php echo $audit['has_audio'] ? '#fff3cd' : '#f5f5f5'; ?>; border-radius: 3px; color: <?php echo $audit['has_audio'] ? '856404' : '#999'; ?>;">
+                                        <?php echo $audit['has_audio'] ? '✓' : '✗'; ?> Aud (<?php echo $audit['audio_count']; ?>)
                                     </span>
                                 </div>
                             </td>
@@ -271,6 +346,15 @@ function geo_audit_post_content($post) {
         'video_count'     => 0,
         'has_entities'    => false,
         'entity_count'    => 0,
+        'has_tldr'        => false,
+        'has_howto'       => false,
+        'howto_steps'     => 0,
+        'has_definition'  => false,
+        'definition_count'=> 0,
+        'has_proscons'    => false,
+        'has_author'      => false,
+        'has_stats'       => false,
+        'stats_count'     => 0,
         'recommendations' => [],
     ];
 
@@ -394,6 +478,54 @@ function geo_audit_post_content($post) {
         $audit['geo_score'] += 10;
     }
 
+    // === TL;DR GEO ===
+    preg_match_all('/data-geo-tldr="true"|class="[^"]*geo-tldr[^"]*"/i', $content, $tldr_matches);
+    $audit['has_tldr'] = count($tldr_matches[0]) > 0;
+    if ($audit['has_tldr']) {
+        $audit['geo_score'] += 15;
+    }
+
+    // === HOW-TO GEO ===
+    preg_match_all('/data-geo-howto="true"|class="[^"]*geo-howto[^"]*"/i', $content, $howto_matches);
+    $audit['has_howto'] = count($howto_matches[0]) > 0;
+    if ($audit['has_howto']) {
+        preg_match_all('/class="[^"]*geo-howto-step[^"]*"/i', $content, $howto_steps);
+        $audit['howto_steps'] = count($howto_steps[0]);
+        $audit['geo_score'] += 20;
+    }
+
+    // === DEFINITION GEO ===
+    preg_match_all('/data-geo-definition="true"|class="[^"]*geo-definition[^"]*"/i', $content, $def_matches);
+    $definition_count = count($def_matches[0]);
+    $audit['definition_count'] = $definition_count;
+    $audit['has_definition'] = $definition_count > 0;
+    if ($audit['has_definition']) {
+        $audit['geo_score'] += min(15, $definition_count * 5);
+    }
+
+    // === PROS/CONS GEO ===
+    preg_match_all('/data-geo-proscons="true"|class="[^"]*geo-proscons[^"]*"/i', $content, $proscons_matches);
+    $audit['has_proscons'] = count($proscons_matches[0]) > 0;
+    if ($audit['has_proscons']) {
+        $audit['geo_score'] += 15;
+    }
+
+    // === AUTHOR BOX GEO ===
+    preg_match_all('/data-geo-author="true"|class="[^"]*geo-author[^"]*"/i', $content, $author_matches);
+    $audit['has_author'] = count($author_matches[0]) > 0;
+    if ($audit['has_author']) {
+        $audit['geo_score'] += 10;
+    }
+
+    // === STATS GEO ===
+    preg_match_all('/data-geo-stats="true"|class="[^"]*geo-stats[^"]*"/i', $content, $stats_matches);
+    $stats_count = count($stats_matches[0]);
+    $audit['stats_count'] = $stats_count;
+    $audit['has_stats'] = $stats_count > 0;
+    if ($audit['has_stats']) {
+        $audit['geo_score'] += min(10, $stats_count * 3);
+    }
+
     // === ENTITÉS (détection dans le contenu brut) ===
     preg_match_all('/\[entity id=\d+\]/', $raw_content, $entity_matches);
     $audit['entity_count'] = count($entity_matches[0]);
@@ -408,6 +540,14 @@ function geo_audit_post_content($post) {
     // === IMAGE À LA UNE ===
     if (has_post_thumbnail($post)) {
         $audit['geo_score'] += 5;
+    }
+
+    // === RECOMMANDATIONS NOUVEAUX BLOCS ===
+    if (!$audit['has_tldr']) {
+        $audit['recommendations'][] = 'Ajouter un bloc TL;DR pour un resume rapide';
+    }
+    if (!$audit['has_author'] && !$audit['has_blockquotes']) {
+        $audit['recommendations'][] = 'Ajouter Author Box ou citations pour E-E-A-T';
     }
 
     // Score maximum 100
@@ -448,12 +588,25 @@ function geo_render_score_meta_box($post) {
     </div>
 
     <div style="font-size: 13px;">
+        <p style="margin: 8px 0; font-weight: 600; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Contenu structuré</p>
+        <p style="margin: 5px 0;"><?php echo $audit['has_tldr'] ? '✓' : '✗'; ?> TL;DR</p>
+        <p style="margin: 5px 0;"><?php echo $audit['has_howto'] ? '✓' : '✗'; ?> How-To <?php if ($audit['has_howto']): ?>(<?php echo $audit['howto_steps']; ?> étapes)<?php endif; ?></p>
+        <p style="margin: 5px 0;"><?php echo $audit['has_definition'] ? '✓' : '✗'; ?> Définitions (<?php echo $audit['definition_count']; ?>)</p>
         <p style="margin: 5px 0;"><?php echo $audit['has_faq'] ? '✓' : '✗'; ?> FAQ (<?php echo $audit['faq_count']; ?>)</p>
+        
+        <p style="margin: 8px 0; font-weight: 600; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Évaluation</p>
+        <p style="margin: 5px 0;"><?php echo $audit['has_proscons'] ? '✓' : '✗'; ?> Pros/Cons</p>
+        <p style="margin: 5px 0;"><?php echo $audit['has_stats'] ? '✓' : '✗'; ?> Stats (<?php echo $audit['stats_count']; ?>)</p>
+        
+        <p style="margin: 8px 0; font-weight: 600; border-bottom: 1px solid #ddd; padding-bottom: 5px;">E-E-A-T</p>
+        <p style="margin: 5px 0;"><?php echo $audit['has_author'] ? '✓' : '✗'; ?> Author Box</p>
         <p style="margin: 5px 0;"><?php echo $audit['has_blockquotes'] ? '✓' : '✗'; ?> Citations (<?php echo $audit['blockquote_count']; ?>)</p>
+        <p style="margin: 5px 0;"><?php echo $audit['has_entities'] ? '✓' : '✗'; ?> Entités (<?php echo $audit['entity_count']; ?>)</p>
+        
+        <p style="margin: 8px 0; font-weight: 600; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Médias</p>
         <p style="margin: 5px 0;"><?php echo $audit['has_images'] ? '✓' : '✗'; ?> Images (<?php echo $audit['image_count']; ?>)</p>
+        <p style="margin: 5px 0;"><?php echo $audit['has_video'] ? '✓' : '✗'; ?> Vidéo (<?php echo $audit['video_count']; ?>)</p>
         <p style="margin: 5px 0;"><?php echo $audit['has_audio'] ? '✓' : '✗'; ?> Audio (<?php echo $audit['audio_count']; ?>)</p>
-        <p style="margin: 5px 0;"><?php echo $audit['has_video'] ? '✓' : '✗'; ?> Video (<?php echo $audit['video_count']; ?>)</p>
-        <p style="margin: 5px 0;"><?php echo $audit['has_entities'] ? '✓' : '✗'; ?> Entites (<?php echo $audit['entity_count']; ?>)</p>
     </div>
 
     <?php if (!empty($audit['recommendations'])): ?>

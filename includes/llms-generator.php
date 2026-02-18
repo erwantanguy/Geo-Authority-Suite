@@ -49,6 +49,8 @@ function geo_generate_llms_content(): string {
         $content .= "\n";
     }
 
+    $content .= geo_generate_llms_ai_section();
+
     $recent_posts = get_posts([
         'post_type'      => 'post',
         'posts_per_page' => get_option('geo_llms_posts_count', 20),
@@ -57,10 +59,16 @@ function geo_generate_llms_content(): string {
         'order'          => 'DESC',
     ]);
 
+    $ai_indexing = class_exists('GEO_AI_Indexing') ? GEO_AI_Indexing::get_instance() : null;
+
     if (!empty($recent_posts)) {
         $content .= "## Articles recents\n\n";
 
         foreach ($recent_posts as $post) {
+            if ($ai_indexing && $ai_indexing->is_excluded_from_ai($post->ID)) {
+                continue;
+            }
+
             $title = get_the_title($post);
             $url = get_permalink($post);
             $excerpt = wp_strip_all_tags(get_the_excerpt($post));
@@ -69,6 +77,11 @@ function geo_generate_llms_content(): string {
             $content .= "### $title\n";
             $content .= "URL : $url\n";
             $content .= "Date : $date\n";
+
+            $score = get_post_meta($post->ID, '_gco_score', true);
+            if ($score !== '') {
+                $content .= "Score GEO : $score/100\n";
+            }
 
             if (!empty($excerpt)) {
                 $content .= "Resume : $excerpt\n";
@@ -87,6 +100,10 @@ function geo_generate_llms_content(): string {
         $content .= "## Pages principales\n\n";
 
         foreach ($main_pages as $page) {
+            if ($ai_indexing && $ai_indexing->is_excluded_from_ai($page->ID)) {
+                continue;
+            }
+
             $title = get_the_title($page);
             $url = get_permalink($page);
 
@@ -137,12 +154,75 @@ function geo_generate_llms_content(): string {
     }
 
     $content .= "## Informations techniques\n\n";
-    $content .= "- Format : llms.txt v1.0\n";
+    $content .= "- Format : llms.txt v1.1\n";
     $content .= "- Genere le : " . date('Y-m-d H:i:s') . "\n";
     $content .= "- CMS : WordPress " . get_bloginfo('version') . "\n";
-    $content .= "- Plugin : GEO Authority Suite\n";
+    $content .= "- Plugin : GEO Authority Suite v" . GEO_AUTHORITY_VERSION . "\n";
+
+    /**
+     * Permet aux extensions de modifier le contenu du fichier llms.txt
+     *
+     * @param string $content Contenu généré
+     */
+    $content = apply_filters('geo_llms_content', $content);
 
     return $content;
+}
+
+function geo_generate_llms_ai_section(): string {
+    $content = '';
+
+    if (!class_exists('GEO_AI_Sitemap')) {
+        return $content;
+    }
+
+    $ai_sitemap = GEO_AI_Sitemap::get_instance();
+    
+    if ($ai_sitemap->sitemap_exists()) {
+        $content .= "## Indexation IA\n\n";
+        $content .= "Sitemap IA : " . $ai_sitemap->get_sitemap_url() . "\n";
+        $content .= "Nombre de contenus optimises : " . $ai_sitemap->get_entry_count() . "\n";
+        
+        $avg_score = geo_get_average_geo_score();
+        if ($avg_score > 0) {
+            $content .= "Score GEO moyen : " . $avg_score . "/100\n";
+        }
+        
+        $content .= "\n";
+    }
+
+    if (class_exists('GEO_AI_Indexing')) {
+        $ai_indexing = GEO_AI_Indexing::get_instance();
+        $stats = $ai_indexing->get_stats();
+        
+        if ($stats['excluded_ai'] > 0) {
+            $content .= "## Contenus exclus de l'indexation IA\n\n";
+            $content .= "Nombre de contenus exclus : " . $stats['excluded_ai'] . "\n";
+            $content .= "Ces contenus sont marques avec data-noai et ne doivent pas etre utilises pour l'entrainement.\n\n";
+        }
+
+        $content .= "## Declaration de contenu\n\n";
+        $content .= "- Contenus originaux : " . $stats['original'] . "\n";
+        $content .= "- Contenus assistes par IA : " . $stats['ai_assisted'] . "\n";
+        $content .= "- Contenus generes par IA : " . $stats['ai_generated'] . "\n\n";
+    }
+
+    return $content;
+}
+
+function geo_get_average_geo_score(): int {
+    global $wpdb;
+    
+    $result = $wpdb->get_var(
+        "SELECT AVG(CAST(meta_value AS DECIMAL(5,2))) 
+         FROM {$wpdb->postmeta} pm
+         INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
+         WHERE pm.meta_key = '_gco_score' 
+         AND pm.meta_value REGEXP '^[0-9]+\\.?[0-9]*$'
+         AND p.post_status = 'publish'"
+    );
+    
+    return $result ? (int) round($result) : 0;
 }
 
 function geo_write_llms_file(): bool {

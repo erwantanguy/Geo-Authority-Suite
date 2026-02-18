@@ -36,6 +36,18 @@ add_action('add_meta_boxes', function () {
         'default'
     );
 
+    $ai_indexing_post_types = apply_filters('geo_ai_indexing_post_types', ['post', 'page']);
+    foreach ($ai_indexing_post_types as $post_type) {
+        add_meta_box(
+            'geo_ai_indexing',
+            'Indexation IA',
+            'geo_ai_indexing_meta_box',
+            $post_type,
+            'side',
+            'default'
+        );
+    }
+
 });
 
 function geo_entity_details_meta_box($post) {
@@ -353,3 +365,107 @@ add_action('save_post_entity', function ($post_id) {
     }
 
 });
+
+function geo_ai_indexing_meta_box($post) {
+    wp_nonce_field('geo_ai_indexing_meta', 'geo_ai_indexing_nonce');
+
+    $exclude_ai = get_post_meta($post->ID, GEO_AI_Indexing::META_EXCLUDE_AI, true);
+    $exclude_llm = get_post_meta($post->ID, GEO_AI_Indexing::META_EXCLUDE_LLM, true);
+    $declaration = get_post_meta($post->ID, GEO_AI_Indexing::META_CONTENT_DECLARATION, true);
+
+    $declaration_labels = GEO_AI_Indexing::get_declaration_labels();
+    $default_declaration = get_option('geo_default_content_declaration', 'original');
+
+    ?>
+    <div class="geo-ai-indexing-metabox">
+        <p>
+            <label>
+                <input type="checkbox" 
+                       name="geo_exclude_ai" 
+                       value="1"
+                       <?php checked($exclude_ai, '1'); ?>>
+                <strong>Exclure de l'indexation IA</strong>
+            </label>
+            <br>
+            <span class="description">Ajoute <code>data-noai</code> et la meta <code>noai</code></span>
+        </p>
+
+        <p>
+            <label>
+                <input type="checkbox" 
+                       name="geo_exclude_llm" 
+                       value="1"
+                       <?php checked($exclude_llm, '1'); ?>>
+                <strong>Exclure des LLM</strong>
+            </label>
+            <br>
+            <span class="description">Ajoute <code>data-nollm</code> spécifiquement</span>
+        </p>
+
+        <hr>
+
+        <p>
+            <label for="geo_content_declaration"><strong>Déclaration de contenu</strong></label>
+            <select name="geo_content_declaration" id="geo_content_declaration" style="width: 100%; margin-top: 5px;">
+                <option value="default" <?php selected($declaration, ''); selected($declaration, 'default'); ?>>
+                    Par défaut (<?php echo esc_html($declaration_labels[$default_declaration] ?? 'Original'); ?>)
+                </option>
+                <?php foreach ($declaration_labels as $value => $label): ?>
+                    <option value="<?php echo esc_attr($value); ?>" <?php selected($declaration, $value); ?>>
+                        <?php echo esc_html($label); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </p>
+
+        <p class="description" style="margin-top: 10px;">
+            La déclaration indique aux IA l'origine de ce contenu 
+            via <code>&lt;meta name="ai-content-declaration"&gt;</code>.
+        </p>
+    </div>
+    <?php
+}
+
+add_action('save_post', function($post_id, $post) {
+    if (!isset($_POST['geo_ai_indexing_nonce']) || 
+        !wp_verify_nonce($_POST['geo_ai_indexing_nonce'], 'geo_ai_indexing_meta')) {
+        return;
+    }
+
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    $allowed_post_types = apply_filters('geo_ai_indexing_post_types', ['post', 'page']);
+    if (!in_array($post->post_type, $allowed_post_types)) {
+        return;
+    }
+
+    if (isset($_POST['geo_exclude_ai'])) {
+        update_post_meta($post_id, GEO_AI_Indexing::META_EXCLUDE_AI, '1');
+    } else {
+        delete_post_meta($post_id, GEO_AI_Indexing::META_EXCLUDE_AI);
+    }
+
+    if (isset($_POST['geo_exclude_llm'])) {
+        update_post_meta($post_id, GEO_AI_Indexing::META_EXCLUDE_LLM, '1');
+    } else {
+        delete_post_meta($post_id, GEO_AI_Indexing::META_EXCLUDE_LLM);
+    }
+
+    $declaration = sanitize_text_field($_POST['geo_content_declaration'] ?? 'default');
+
+    if ($declaration === 'default') {
+        delete_post_meta($post_id, GEO_AI_Indexing::META_CONTENT_DECLARATION);
+    } else {
+        $valid_declarations = array_keys(GEO_AI_Indexing::get_declaration_labels());
+        if (in_array($declaration, $valid_declarations)) {
+            update_post_meta($post_id, GEO_AI_Indexing::META_CONTENT_DECLARATION, $declaration);
+        }
+    }
+
+}, 10, 2);

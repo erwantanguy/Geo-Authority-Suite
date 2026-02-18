@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: GEO Authority Suite
- * Description: Suite complète pour le GEO (Generative Engine Optimization) - Gestion des entités Schema.org, JSON-LD, llms.txt et audits de contenu.
- * Version: 1.2.0
+ * Description: Suite complète pour le GEO (Generative Engine Optimization) - Gestion des entités Schema.org, JSON-LD, llms.txt, indexation IA et audits de contenu.
+ * Version: 1.4.0
  * Author: Erwan Tanguy - Ticoët
  * Author URI: https://www.ticoet.fr/
  * License: GPL2+
@@ -13,14 +13,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('GEO_AUTHORITY_VERSION', '1.0.0');
+define('GEO_AUTHORITY_VERSION', '1.4.0');
 define('GEO_AUTHORITY_PATH', plugin_dir_path(__FILE__));
 define('GEO_AUTHORITY_URL', plugin_dir_url(__FILE__));
 
 require_once GEO_AUTHORITY_PATH . 'includes/entity-id.php';
 require_once GEO_AUTHORITY_PATH . 'includes/entity-registry.php';
 require_once GEO_AUTHORITY_PATH . 'includes/cpt-entity.php';
-require_once GEO_AUTHORITY_PATH . 'includes/meta-boxes.php';
 require_once GEO_AUTHORITY_PATH . 'includes/duplicate-detection.php';
 require_once GEO_AUTHORITY_PATH . 'includes/schema-organization.php';
 require_once GEO_AUTHORITY_PATH . 'includes/schema-person.php';
@@ -28,10 +27,19 @@ require_once GEO_AUTHORITY_PATH . 'includes/jsonld-output.php';
 require_once GEO_AUTHORITY_PATH . 'includes/entity-audit.php';
 require_once GEO_AUTHORITY_PATH . 'includes/content-audit.php';
 require_once GEO_AUTHORITY_PATH . 'includes/admin-audit-page.php';
+require_once GEO_AUTHORITY_PATH . 'includes/ai-indexing.php';
+require_once GEO_AUTHORITY_PATH . 'includes/ai-sitemap.php';
+require_once GEO_AUTHORITY_PATH . 'includes/admin-ai-indexing-page.php';
+require_once GEO_AUTHORITY_PATH . 'includes/meta-boxes.php';
 require_once GEO_AUTHORITY_PATH . 'includes/llms-generator.php';
 
 register_activation_hook(__FILE__, function () {
     do_action('init');
+    
+    if (class_exists('GEO_AI_Sitemap')) {
+        GEO_AI_Sitemap::get_instance()->add_rewrite_rules();
+    }
+    
     flush_rewrite_rules();
     set_transient('geo_authority_activation_notice', true, 5);
 });
